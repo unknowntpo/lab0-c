@@ -122,7 +122,7 @@ bool q_insert_tail(queue_t *q, char *s)
     q->tail = newh;
     q->n++;
 
-    return false;
+    return true;
 }
 
 /*
@@ -233,7 +233,7 @@ static list_ele_t **get_min_element(list_ele_t **min, list_ele_t **e)
 {
     while (*e) {
         if (strcmp((*min)->value, (*e)->value) > 0)
-            min = 0;
+            min = e;
         e = &(*e)->next;
     }
 
