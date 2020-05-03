@@ -74,7 +74,6 @@ static bool do_source_cmd(int argc, char *argv[]);
 static bool do_log_cmd(int argc, char *argv[]);
 static bool do_time_cmd(int argc, char *argv[]);
 static bool do_comment_cmd(int argc, char *argv[]);
-
 static void init_in();
 
 static bool push_file(char *fname);
