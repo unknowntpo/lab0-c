@@ -41,12 +41,16 @@ void q_free(queue_t *q)
  */
 bool q_insert_head(queue_t *q, char *s)
 {
+    /* Guard of NULL pointer */
+    size_t len = strlen(s);
+    if (!q || !len)
+        return false;
+
     list_ele_t *newh;
     newh = malloc(sizeof(list_ele_t));
     if (!newh)
         return false;
 
-    size_t len = strlen(s);
     newh->value = malloc(len + 1);
     if (!newh->value) {
         free(newh);
