@@ -5,6 +5,14 @@
 #include "harness.h"
 #include "queue.h"
 
+/* GUARD of NULL pointer */
+#define NULL_POINTER_GUARD(q) \
+    do {                      \
+        if (!q)               \
+            return 0;         \
+    } while (0)
+
+
 /*
  * Create empty queue.
  * Return NULL if could not allocate space.
@@ -13,10 +21,8 @@ queue_t *q_new()
 {
     queue_t *q = malloc(sizeof(queue_t));
     /* TODO: What if malloc returned NULL? */
-    if (!q) {
-        perror("malloc");
-        return NULL;
-    }
+    NULL_POINTER_GUARD(q);
+
     q->head = NULL;
     q->tail = NULL;
     q->size = 0;
@@ -43,13 +49,12 @@ bool q_insert_head(queue_t *q, char *s)
 {
     /* Guard of NULL pointer */
     size_t len = strlen(s);
-    if (!q || !len)
-        return false;
+    NULL_POINTER_GUARD(q);
+    NULL_POINTER_GUARD(len);
 
     list_ele_t *newh;
     newh = malloc(sizeof(list_ele_t));
-    if (!newh)
-        return false;
+    NULL_POINTER_GUARD(newh);
 
     newh->value = malloc(len + 1);
     if (!newh->value) {
@@ -108,10 +113,9 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
  */
 int q_size(queue_t *q)
 {
-    /* TODO: You need to write the code for this function */
-    /* Remember: It should operate in O(1) time */
-    /* TODO: Remove the above comment when you are about to implement. */
-    return q ? q->size : 0;
+    NULL_POINTER_GUARD(q);
+    return q->size;
+    // return q ? q->size : 0;
 }
 
 /*
