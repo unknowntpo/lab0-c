@@ -6,10 +6,10 @@
 #include "queue.h"
 
 /* GUARD of NULL pointer */
-#define NULL_POINTER_GUARD(q) \
-    do {                      \
-        if (!q)               \
-            return 0;         \
+#define NULL_PTR_GUARD(q) \
+    do {                  \
+        if (!q)           \
+            return 0;     \
     } while (0)
 
 
@@ -21,7 +21,7 @@ queue_t *q_new()
 {
     queue_t *q = malloc(sizeof(queue_t));
     /* TODO: What if malloc returned NULL? */
-    NULL_POINTER_GUARD(q);
+    NULL_PTR_GUARD(q);
 
     q->head = NULL;
     q->tail = NULL;
@@ -49,12 +49,12 @@ bool q_insert_head(queue_t *q, char *s)
 {
     /* Guard of NULL pointer */
     size_t len = strlen(s);
-    NULL_POINTER_GUARD(q);
-    NULL_POINTER_GUARD(len);
+    NULL_PTR_GUARD(q);
+    NULL_PTR_GUARD(len);
 
     list_ele_t *newh;
     newh = malloc(sizeof(list_ele_t));
-    NULL_POINTER_GUARD(newh);
+    NULL_PTR_GUARD(newh);
 
     newh->value = malloc(len + 1);
     if (!newh->value) {
@@ -85,11 +85,11 @@ bool q_insert_head(queue_t *q, char *s)
  */
 bool q_insert_tail(queue_t *q, char *s)
 {
-    NULL_POINTER_GUARD(q);
+    NULL_PTR_GUARD(q);
     size_t len = strlen(s);
 
     list_ele_t *newt = malloc(sizeof(list_ele_t));
-    NULL_POINTER_GUARD(newt);
+    NULL_PTR_GUARD(newt);
     newt->next = NULL;
     newt->value = malloc(len + 1);
     if (!newt->value) {
@@ -132,7 +132,7 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
  */
 int q_size(queue_t *q)
 {
-    NULL_POINTER_GUARD(q);
+    NULL_PTR_GUARD(q);
     return q->size;
     // return q ? q->size : 0;
 }
