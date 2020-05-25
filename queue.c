@@ -107,6 +107,9 @@ bool q_insert_tail(queue_t *q, char *s)
         q->tail->next = newt;
         q->tail = q->tail->next;
     }
+
+    q->size++;
+
     return true;
 }
 
