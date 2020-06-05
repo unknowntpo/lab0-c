@@ -142,6 +142,7 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
     int len = strlen(old_h->value);  // not including `\0`
 
     NULL_PTR_GUARD(sp);
+    /* TODO: understand the boundary of sp */
     if (len <= bufsize - 1) {
         strncpy(sp, old_h->value, len);
         sp[len] = '\0';
