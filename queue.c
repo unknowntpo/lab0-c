@@ -36,14 +36,14 @@ void q_free(queue_t *q)
     if (!q)
         return;
 
-    list_ele_t *cur, *nxt;
+    list_ele_t *tmp;
 
-    for (cur = q->head; cur;) {
+    for (tmp = q->head; tmp;) {
         /* Store the next element */
-        nxt = cur->next;
-        free(cur->value);
-        free(cur);
-        cur = nxt;
+        q->head = tmp->next;
+        free(tmp->value);
+        free(tmp);
+        tmp = q->head;
     }
 
     free(q);
