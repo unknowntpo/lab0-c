@@ -179,17 +179,28 @@ int q_size(queue_t *q)
  */
 void q_reverse(queue_t *q)
 {
-    /* TODO: reduce the amount of pointer */
-    list_ele_t *pre, *cur;
+    if (!q || q->size == 1)
+        return;
 
-    for (pre = q->head->next, cur = pre->next, q->head->next = NULL; pre;) {
-        pre->next = q->head;
-        q->head = pre;
-        pre = cur;
-        if (pre)
-            cur = cur->next;
+    /* Set the pos of q->tail and tmp */
+    list_ele_t *tmp;
+    tmp = q->head->next;
+    q->tail = tmp->next;
+    q->head->next = NULL;
+
+    /* Do reverse, tmp always point to the list element we attempt
+     * to move
+     */
+    for (; tmp;) {
+        tmp->next = q->head;
+        q->head = tmp;
+        tmp = q->tail;
+        /* TODO: set the tail to NULL after reverse,
+         * so we don't need this if statement
+         */
+        if (tmp)
+            q->tail = tmp->next;
     }
-
     return;
 }
 
