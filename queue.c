@@ -134,23 +134,19 @@ bool q_insert_tail(queue_t *q, char *s)
  */
 bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 {
-    if (!q || !q->head)
-        return false;
-
     list_ele_t *old_h;
-    old_h = q->head;
-    int len = strlen(old_h->value);  // not including `\0`
 
-    NULL_PTR_GUARD(sp);
-    /* TODO: understand the boundary of sp */
-    if (len <= bufsize - 1) {
-        strncpy(sp, old_h->value, len);
-        sp[len] = '\0';
-    } else {
-        strncpy(sp, old_h->value, bufsize - 1);
-        sp[bufsize] = '\0';
-    }
+    if (!q || !q->head || !sp)
+        return false;
+    /* FIXME: verify if bufsize == strlen(q->head->value) */
+    size_t ncopy = bufsize >= strlen(q->head->value) ? strlen(q->head->value)
+                                                     : bufsize - 1;
+    strncpy(sp, q->head->value, ncopy);
+    sp[ncopy] = '\0';
+
+    old_h = q->head;
     q->head = q->head->next;
+
     free(old_h->value);
     free(old_h);
 
