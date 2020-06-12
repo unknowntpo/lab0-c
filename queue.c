@@ -138,9 +138,9 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 
     if (!q || !q->head || !sp)
         return false;
-    /* FIXME: verify if bufsize == strlen(q->head->value) */
-    size_t ncopy = bufsize >= strlen(q->head->value) ? strlen(q->head->value)
-                                                     : bufsize - 1;
+    size_t ncopy = (bufsize - 1) >= strlen(q->head->value)
+                       ? strlen(q->head->value)
+                       : bufsize - 1;
     strncpy(sp, q->head->value, ncopy);
     sp[ncopy] = '\0';
 
