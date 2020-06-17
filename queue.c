@@ -177,29 +177,24 @@ void q_reverse(queue_t *q)
 {
     if (!q || q->size == 1)
         return;
+    list_ele_t *pre, *cur, *nxt, *tmp;
+    /* Swap head and tail */
+    tmp = q->tail;
+    q->tail = q->head;
+    q->head = tmp;
 
-    /* Set the pos of q->tail and tmp */
-    list_ele_t *tmp;
-    tmp = q->head->next;
-    q->tail = tmp->next;
-    q->head->next = NULL;
+    /* reverse the arrow */
 
-    /* Do reverse, tmp always point to the list element we attempt
-     * to move
-     */
-    for (; tmp;) {
-        tmp->next = q->head;
-        q->head = tmp;
-        tmp = q->tail;
-        /* TODO: set the tail to NULL after reverse,
-         * so we don't need this if statement
-         */
-        if (tmp)
-            q->tail = tmp->next;
+    for (pre = q->tail, cur = pre->next, nxt = cur->next, q->tail->next = NULL;
+         ;) {
+        cur->next = pre;
+        if (!nxt->next)
+            break;
+        pre = cur;
+        cur = nxt;
+        nxt = nxt->next;
     }
-    return;
 }
-
 /*
  * Sort elements of queue in ascending order
  * No effect if q is NULL or empty. In addition, if q has only one
