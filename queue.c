@@ -177,22 +177,29 @@ void q_reverse(queue_t *q)
 {
     if (!q || q->size == 1)
         return;
-    list_ele_t *pre, *cur, *nxt, *tmp;
-    /* Swap head and tail */
-    tmp = q->tail;
-    q->tail = q->head;
-    q->head = tmp;
+    list_ele_t *pre, *cur, *nxt;
 
-    /* reverse the arrow */
+    /* Swap q->head and q->tail */
+    pre = q->head;
+    q->head = q->tail;
+    q->tail = pre;
 
-    for (pre = q->tail, cur = pre->next, nxt = cur->next, q->tail->next = NULL;
+    /* reverse the linked list */
+    for (q->head->next = q->tail, pre = q->tail, cur = pre->next,
+        nxt = cur->next;
          ;) {
+        /* reverse */
         cur->next = pre;
-        if (!nxt->next)
-            break;
+
+        /* update the pointer */
         pre = cur;
-        cur = nxt;
-        nxt = nxt->next;
+        if (cur == q->head) {
+            q->tail->next = NULL;
+            return;  // means we're done
+        } else {
+            cur = nxt;
+            nxt = nxt->next;
+        }
     }
 }
 /*
