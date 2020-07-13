@@ -12,6 +12,18 @@
             return 0;     \
     } while (0)
 
+/* Actual function that sort the elements in queue. */
+static void merge_sort(queue_t *q);
+static void selection_sort(queue_t *q);
+static void bubble_sort(queue_t *q);
+
+/* Array of function pointer which points to the actual sort function */
+void (*sort_func[SORT_METHOD_NUM])(queue_t *q) = {
+    merge_sort,
+    selection_sort,
+    bubble_sort,
+};
+
 
 /*
  * Create empty queue.
@@ -202,13 +214,34 @@ void q_reverse(queue_t *q)
         }
     }
 }
-/*
- * Sort elements of queue in ascending order
- * No effect if q is NULL or empty. In addition, if q has only one
- * element, do nothing.
- */
-void q_sort(queue_t *q)
+
+static void merge_sort(queue_t *q)
 {
-    /* TODO: You need to write the code for this function */
-    /* TODO: Remove the above comment when you are about to implement. */
+    if (!q || q->size <= 1)
+        return;
+}
+
+static void selection_sort(queue_t *q)
+{
+    if (!q || q->size <= 1)
+        return;
+}
+
+
+static void bubble_sort(queue_t *q)
+{
+    if (!q || q->size <= 1)
+        return;
+}
+
+/*
+ * Register the sorting method.
+ */
+void q_sort_register_method(int sort_method)
+{
+    /* Sanity check */
+    if (sort_method < MERGE_SORT || sort_method >= SORT_METHOD_NUM)
+        sort_method = MERGE_SORT;
+
+    q_sort = sort_func[sort_method];
 }

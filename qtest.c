@@ -533,9 +533,13 @@ static bool do_size(int argc, char *argv[])
 
 bool do_sort(int argc, char *argv[])
 {
-    if (argc != 1) {
+    int sort_method = MERGE_SORT;
+
+    if (argc < 1) {
         report(1, "%s takes no arguments", argv[0]);
         return false;
+    } else if (argc > 2) {
+        report(1, "Too many arguments\nUsage: %s <sorting method>", argv[0]);
     }
 
     if (!q)
@@ -546,6 +550,10 @@ bool do_sort(int argc, char *argv[])
     if (cnt < 2)
         report(3, "Warning: Calling sort on single node");
     error_check();
+
+    if (argc == 2)
+        sort_method = atoi(argv[1]);
+    q_sort_register_method(sort_method);
 
     set_noallocate_mode(true);
     if (exception_setup(true))

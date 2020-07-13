@@ -25,10 +25,6 @@ typedef struct ELE {
 /* Queue structure */
 typedef struct {
     list_ele_t *head; /* Linked list of elements */
-    /* TODO: You will need to add more fields to this structure
-     *        to efficiently implement q_size and q_insert_tail.
-     */
-    /* TODO: Remove the above comment when you are about to implement. */
     list_ele_t *tail;
     int size;
 } queue_t;
@@ -90,11 +86,26 @@ int q_size(queue_t *q);
  */
 void q_reverse(queue_t *q);
 
+/* Enumeration for different sorting methods */
+enum {
+    MERGE_SORT,
+    SELECTION_SORT,
+    BUBBLE_SORT,
+
+    SORT_METHOD_NUM,
+};
+
 /*
+ * Function pointer to actual sorting method.
  * Sort elements of queue in ascending order
  * No effect if q is NULL or empty. In addition, if q has only one
  * element, do nothing.
  */
-void q_sort(queue_t *q);
+void (*q_sort)(queue_t *q);
+
+/*
+ * Register the sorting method.
+ */
+void q_sort_register_method(int sort_method);
 
 #endif /* LAB0_QUEUE_H */
