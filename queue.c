@@ -159,6 +159,11 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
     old_h = q->head;
     q->head = q->head->next;
 
+    /* Update q->tail if q->size == 1 */
+    /* TODO: Apply Good-Taste to the update of q->tail */
+    if (q->size == 1)
+        q->tail = NULL;
+
     free(old_h->value);
     free(old_h);
 
