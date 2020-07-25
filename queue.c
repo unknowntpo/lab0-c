@@ -304,6 +304,19 @@ static void merge_sort(queue_t *q)
     merge_sort(&second_half);
     merge(q, &second_half, q);
 }
+
+static void selection_sort(queue_t *q)
+{
+    if (!q || q->size <= 1)
+        return;
+}
+
+
+static void bubble_sort(queue_t *q)
+{
+    if (!q || q->size <= 1)
+        return;
+}
 #endif
 
 
