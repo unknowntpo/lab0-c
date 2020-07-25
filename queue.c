@@ -208,6 +208,7 @@ void q_reverse(queue_t *q)
     q->tail = pre;
 
     /* reverse the linked list */
+    /* FIXME: Dereferencing NULL pointer */
     for (q->head->next = q->tail, pre = q->tail, cur = pre->next,
         nxt = cur->next;
          ;) {
