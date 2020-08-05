@@ -8,7 +8,7 @@
 /* Change SKIP_MY_SORT to 1 if you want to use AdrianHuang's sort function
  * for debuging
  */
-#define SKIP_MY_SORT 1
+#define SKIP_MY_SORT 0
 
 
 /* GUARD of NULL pointer */
@@ -321,6 +321,7 @@ static void bubble_sort(queue_t *q)
 #endif
 
 
+/* Function after this line means using sort function I'm implementing. */
 #if SKIP_MY_SORT == 0
 
 /* My version of sort */
@@ -337,13 +338,43 @@ static void selection_sort(queue_t *q)
         return;
 }
 
-
 static void bubble_sort(queue_t *q)
 {
+    list_ele_t *pre, *cur, *nxt;
+
     if (!q || q->size <= 1)
         return;
-}
+    for (int i = 0; i < q->size; i++) {
+        pre = NULL;
+        cur = q->head;
+        nxt = q->head->next;  // if
 
+        for (int j = 0; j < q->size - 1; j++) {
+            if (strcmp(cur->value, nxt->value) > 0) {  // need swap
+                // swap(cur->value, nxt->value);
+                cur->next = nxt->next;
+                nxt->next = cur;
+
+                /* Update pre, cur, nxt */
+                if (cur == q->head) {  // if dealing with q->head
+                    pre = nxt;
+                    q->head = nxt;
+                } else {
+                    pre->next = nxt;
+                    pre = pre->next;
+                }
+
+                cur = pre->next;
+                nxt = cur->next;
+            } else {  // no need to swap
+                /* Update pre, cur, nxt */
+                pre = cur;
+                cur = cur->next;
+                nxt = cur->next;
+            }
+        }
+    }
+}
 #endif
 
 /*
