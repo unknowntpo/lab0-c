@@ -198,7 +198,7 @@ int q_size(queue_t *q)
  */
 void q_reverse(queue_t *q)
 {
-    if (!q || q->size == 1)
+    if (!q || q->size <= 1)
         return;
     list_ele_t *pre, *cur, *nxt;
 
