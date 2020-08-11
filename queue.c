@@ -243,11 +243,11 @@ static void bubble_sort(queue_t *q)
     for (int i = 0; i < q->size; i++) {
         pre = NULL;
         cur = q->head;
-        nxt = q->head->next;  // if
-
+        nxt = q->head->next;
+        /* TODO: Change upper bound to j < q->size - i ?
+         * Ref: Rosen Discrete Math p.197 */
         for (int j = 0; j < q->size - 1; j++) {
             if (strcmp(cur->value, nxt->value) > 0) {  // need swap
-                // swap(cur->value, nxt->value);
                 cur->next = nxt->next;
                 nxt->next = cur;
 
