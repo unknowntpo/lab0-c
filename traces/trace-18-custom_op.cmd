@@ -5,4 +5,4 @@ new
 ih gerbil
 ih bear
 ih dolphin
-sort 2 
+sort 

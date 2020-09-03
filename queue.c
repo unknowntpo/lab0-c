@@ -14,6 +14,9 @@
 
 /* Actual function that sort the elements in queue. */
 static void merge_sort(queue_t *q);
+static list_ele_t *do_merge_sort(list_ele_t *);
+static list_ele_t *do_merge(list_ele_t *, list_ele_t *);
+
 static void selection_sort(queue_t *q);
 static void bubble_sort(queue_t *q);
 
@@ -221,10 +224,55 @@ void q_reverse(queue_t *q)
     }
 }
 
+/* The caller function preparing merge_sort operation */
 static void merge_sort(queue_t *q)
 {
     if (!q || q->size <= 1)
         return;
+
+    // update q_tail?
+    q->head = do_merge_sort(q->head);
+    while (q->tail->next)
+        q->tail = q->tail->next;
+
+    return;
+}
+
+/* Do the actual operation of merge_sort */
+/* FIXME: Stack overflow, the end condition doesn't work */
+static list_ele_t *do_merge_sort(list_ele_t *head)
+{
+    if (!head->next)
+        return head;
+    /* Do split using tortoise and hare algorithm */
+    list_ele_t *slow = head;
+    list_ele_t *fast = head->next;
+
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    fast = slow->next;
+    slow->next = NULL;
+
+    /* Sort each list */
+
+    list_ele_t *l1 = do_merge_sort(head);
+    list_ele_t *l2 = do_merge_sort(fast);
+    return do_merge(l1, l2);
+}
+/* Do the merge part */
+static list_ele_t *do_merge(list_ele_t *l1, list_ele_t *l2)
+{
+    if (!l1)
+        return l2;
+    if (!l2)
+        return l1;
+
+    list_ele_t *head = (strcmp(l1->value, l2->value) <= 0) ? l1 : l2;
+    head->next = (strcmp(l1->value, l2->value) <= 0) ? do_merge(l1->next, l2)
+                                                     : do_merge(l1, l2->next);
+    return head;
 }
 
 
