@@ -63,6 +63,8 @@ valgrind: valgrind_existence
 	cp qtest $(patched_file)
 	chmod u+x $(patched_file)
 	sed -i "s/alarm/isnan/g" $(patched_file)
+	# TODO: Add facility to output logfile with redirection 2>&1
+	# e.g. make valgrind > log.txt 2>&1 || (echo "Fail to test valgrind"; exit 1)
 	scripts/driver.py -p $(patched_file) --valgrind $(TCASE)
 	@echo
 	@echo "Test with specific case by running command:" 
