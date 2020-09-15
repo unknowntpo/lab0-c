@@ -120,6 +120,7 @@ bool q_insert_tail(queue_t *q, char *s)
     newt->value = malloc(len + 1);
     if (!newt->value) {
         free(newt->value);
+        free(newt);
         return false;
     }
 
