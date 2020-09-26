@@ -1,5 +1,7 @@
 /* Implementation of simple command-line interface */
 
+#include "console.h"
+
 #include <ctype.h>
 #include <fcntl.h>
 #include <inttypes.h>
@@ -13,7 +15,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "console.h"
 #include "report.h"
 
 /* Some global values */
@@ -59,6 +60,7 @@ static bool echo = 0;
 
 static bool quit_flag = false;
 static char *prompt = "cmd> ";
+static bool has_infile = false;
 
 /* Optional function to call as part of exit process */
 /* Maximum number of quit functions */
@@ -160,10 +162,10 @@ static char **parse_args(char *line, int *argcp)
     size_t len = strlen(line);
     /* First copy into buffer with each substring null-terminated */
     char *buf = malloc_or_fail(len + 1, "parse_args");
+    buf[len] = '\0';
     char *src = line;
     char *dst = buf;
     bool skipping = true;
-
     int c;
     int argc = 0;
     while ((c = *src++) != '\0') {
@@ -210,7 +212,6 @@ static bool interpret_cmda(int argc, char *argv[])
 {
     if (argc == 0)
         return true;
-
     /* Try to find matching command */
     cmd_ptr next_cmd = cmd_list;
     bool ok = true;
@@ -439,6 +440,7 @@ static bool do_time_cmd(int argc, char *argv[])
 static bool push_file(char *fname)
 {
     int fd = fname ? open(fname, O_RDONLY) : STDIN_FILENO;
+    has_infile = fname ? true : false;
     if (fd < 0)
         return false;
 
@@ -529,17 +531,6 @@ static char *readline()
     return linebuf;
 }
 
-/* Determine if there is a complete command line in input buffer */
-static bool read_ready()
-{
-    for (int i = 0; buf_stack && i < buf_stack->cnt; i++) {
-        if (buf_stack->bufptr[i] == '\n')
-            return true;
-    }
-
-    return false;
-}
-
 static bool cmd_done()
 {
     return !buf_stack || quit_flag;
@@ -561,14 +552,8 @@ int cmd_select(int nfds,
                fd_set *exceptfds,
                struct timeval *timeout)
 {
-    char *cmdline;
     int infd;
     fd_set local_readset;
-    while (!block_flag && read_ready()) {
-        cmdline = readline();
-        interpret_cmd(cmdline);
-        prompt_flag = true;
-    }
 
     if (cmd_done())
         return 0;
@@ -602,9 +587,12 @@ int cmd_select(int nfds,
         /* Commandline input available */
         FD_CLR(infd, readfds);
         result--;
-        cmdline = readline();
-        if (cmdline)
-            interpret_cmd(cmdline);
+        if (has_infile) {
+            char *cmdline;
+            cmdline = readline();
+            if (cmdline)
+                interpret_cmd(cmdline);
+        }
     }
     return result;
 }
@@ -614,7 +602,49 @@ bool finish_cmd()
     bool ok = true;
     if (!quit_flag)
         ok = ok && do_quit_cmd(0, NULL);
+    has_infile = false;
     return ok && err_cnt == 0;
+}
+
+static bool cmd_maybe(char *target, const char *src)
+{
+    for (int i = 0; i < strlen(src); i++) {
+        if (target[i] == '\0')
+            return false;
+        if (src[i] != target[i])
+            return false;
+    }
+    return true;
+}
+
+void completion(const char *buf, linenoiseCompletions *lc)
+{
+    if (strncmp("option ", buf, 7) == 0) {
+        param_ptr plist = param_list;
+
+        while (plist) {
+            char str[128] = "";
+            // if parameter is too long, now we just ignore it
+            if (strlen(plist->name) > 120)
+                continue;
+
+            strcat(str, "option ");
+            strcat(str, plist->name);
+            if (cmd_maybe(str, buf))
+                linenoiseAddCompletion(lc, str);
+
+            plist = plist->next;
+        }
+        return;
+    }
+
+    cmd_ptr clist = cmd_list;
+    while (clist) {
+        if (cmd_maybe(clist->name, buf))
+            linenoiseAddCompletion(lc, clist->name);
+
+        clist = clist->next;
+    }
 }
 
 bool run_console(char *infile_name)
@@ -624,7 +654,18 @@ bool run_console(char *infile_name)
         return false;
     }
 
-    while (!cmd_done())
-        cmd_select(0, NULL, NULL, NULL, NULL);
+    if (!has_infile) {
+        char *cmdline;
+        while ((cmdline = linenoise(prompt)) != NULL) {
+            interpret_cmd(cmdline);
+            linenoiseHistoryAdd(cmdline);       /* Add to the history. */
+            linenoiseHistorySave(HISTORY_FILE); /* Save the history on disk. */
+            linenoiseFree(cmdline);
+        }
+    } else {
+        while (!cmd_done())
+            cmd_select(0, NULL, NULL, NULL, NULL);
+    }
+
     return err_cnt == 0;
 }
