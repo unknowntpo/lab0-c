@@ -35,7 +35,6 @@ void (*sort_func[SORT_METHOD_NUM])(queue_t *q) = {
 queue_t *q_new()
 {
     queue_t *q = malloc(sizeof(queue_t));
-    /* TODO: What if malloc returned NULL? */
     NULL_PTR_GUARD(q);
 
     q->head = NULL;
@@ -184,7 +183,6 @@ int q_size(queue_t *q)
 {
     NULL_PTR_GUARD(q);
     return q->size;
-    // return q ? q->size : 0;
 }
 
 /*
@@ -231,7 +229,6 @@ static void merge_sort(queue_t *q)
     if (!q || q->size <= 1)
         return;
 
-    // update q_tail?
     q->head = do_merge_sort(q->head);
     while (q->tail->next)
         q->tail = q->tail->next;
