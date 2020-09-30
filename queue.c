@@ -279,14 +279,16 @@ static void selection_sort(queue_t *q)
     if (!q || q->size <= 1)
         return;
 }
-
 static void bubble_sort(queue_t *q)
 {
     if (!q || q->size <= 1)
         return;
     list_ele_t *tmp;
+    list_ele_t **in_h = &q->head;
     for (int i = 0; i < q->size; i++) {
-        list_ele_t **in_h = &q->head;
+        /* Set q->tail when every round of comparison is finished */
+        q->tail = (*in_h);
+        in_h = &q->head;
         for (int j = 0; j < q->size - 1 - i; j++) {
             if (strcmp((*in_h)->value, (*in_h)->next->value) > 0) {
                 tmp = (*in_h)->next;
@@ -297,10 +299,6 @@ static void bubble_sort(queue_t *q)
             in_h = &(*in_h)->next;
         }
     }
-    /* Update q->tail */
-    for (q->tail = q->head; q->tail->next; q->tail = q->tail->next)
-        ;
-
     return;
 }
 
