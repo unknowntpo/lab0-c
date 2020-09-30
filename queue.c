@@ -282,40 +282,26 @@ static void selection_sort(queue_t *q)
 
 static void bubble_sort(queue_t *q)
 {
-    list_ele_t *pre, *cur, *nxt;
-
     if (!q || q->size <= 1)
         return;
-    for (int i = 1; i <= q->size; i++) {
-        pre = NULL;
-        cur = q->head;
-        nxt = q->head->next;
-        /* TODO: Change upper bound to j < q->size - i ?
-         * Ref: Rosen Discrete Math p.197 */
-        for (int j = 1; j <= q->size - i; j++) {
-            if (strcmp(cur->value, nxt->value) > 0) {  // need swap
-                cur->next = nxt->next;
-                nxt->next = cur;
-
-                /* Update pre, cur, nxt */
-                if (cur == q->head) {  // if dealing with q->head
-                    pre = nxt;
-                    q->head = nxt;
-                } else {
-                    pre->next = nxt;
-                    pre = pre->next;
-                }
-
-                cur = pre->next;
-                nxt = cur->next;
-            } else {  // no need to swap
-                /* Update pre, cur, nxt */
-                pre = cur;
-                cur = cur->next;
-                nxt = cur->next;
+    list_ele_t *tmp;
+    for (int i = 0; i < q->size; i++) {
+        list_ele_t **in_h = &q->head;
+        for (int j = 0; j < q->size - 1 - i; j++) {
+            if (strcmp((*in_h)->value, (*in_h)->next->value) > 0) {
+                tmp = (*in_h)->next;
+                (*in_h)->next = tmp->next;
+                tmp->next = (*in_h);
+                (*in_h) = tmp;
             }
+            in_h = &(*in_h)->next;
         }
     }
+    /* Update q->tail */
+    for (q->tail = q->head; q->tail->next; q->tail = q->tail->next)
+        ;
+
+    return;
 }
 
 /*
