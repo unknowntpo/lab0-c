@@ -262,17 +262,34 @@ static list_ele_t *do_merge_sort(list_ele_t *head)
 /* Do the merge part */
 static list_ele_t *do_merge(list_ele_t *l1, list_ele_t *l2)
 {
-    if (!l1)
-        return l2;
-    if (!l2)
-        return l1;
+    list_ele_t *head;
 
-    list_ele_t *head = (strcmp(l1->value, l2->value) <= 0) ? l1 : l2;
-    head->next = (strcmp(l1->value, l2->value) <= 0) ? do_merge(l1->next, l2)
-                                                     : do_merge(l1, l2->next);
+    if (strcmp(l1->value, l2->value) <= 0) {
+        head = l1;
+        l1 = l1->next;
+    } else {
+        head = l2;
+        l2 = l2->next;
+    }
+    for (list_ele_t *cur = head;; cur = cur->next) {
+        if (!l1) {
+            cur->next = l2;
+            break;
+        }
+        if (!l2) {
+            cur->next = l1;
+            break;
+        }
+        if (strcmp(l1->value, l2->value) <= 0) {
+            cur->next = l1;
+            l1 = l1->next;
+        } else {
+            cur->next = l2;
+            l2 = l2->next;
+        }
+    }
     return head;
 }
-
 
 static void selection_sort(queue_t *q)
 {
