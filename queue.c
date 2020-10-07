@@ -196,31 +196,18 @@ void q_reverse(queue_t *q)
 {
     if (!q || q->size <= 1)
         return;
-    list_ele_t *pre, *cur, *nxt;
 
-    /* Swap q->head and q->tail */
-    pre = q->head;
-    q->head = q->tail;
-    q->tail = pre;
+    /* cursor point to head of elements that are already reversed */
+    list_ele_t *cursor = NULL;
+    list_ele_t *tmp;
 
-    /* reverse the linked list */
-    /* FIXME: Dereferencing NULL pointer */
-    for (q->head->next = q->tail, pre = q->tail, cur = pre->next,
-        nxt = cur->next;
-         ;) {
-        /* reverse */
-        cur->next = pre;
-
-        /* update the pointer */
-        pre = cur;
-        if (cur == q->head) {
-            q->tail->next = NULL;
-            return;  // means we're done
-        } else {
-            cur = nxt;
-            nxt = nxt->next;
-        }
+    for (q->tail = q->head; q->head;) {
+        tmp = q->head->next;
+        q->head->next = cursor;
+        cursor = q->head;
+        q->head = tmp;
     }
+    q->head = cursor;
 }
 
 /* The caller function preparing merge_sort operation */
